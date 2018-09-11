@@ -1,16 +1,20 @@
 package com.solstice.accountaddress.service;
 
-import com.google.gson.Gson;
 import com.solstice.accountaddress.dao.AccountRepository;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccountAddressService {
+
+  private Logger logger = LoggerFactory.getLogger(AccountAddressService.class);
 
   private ObjectMapper objectMapper;
 
@@ -26,16 +30,32 @@ public class AccountAddressService {
   }
 
   public Account createAccount(String data) {
-    Account newAccount = new Account();
+    Account newAccount = null;
+    try {
+      newAccount = objectMapper.readValue(data, Account.class);
+      newAccount = accountRepository.save(newAccount);
+    } catch (IOException e) {
+      logger.error("IOException thrown in createAccount: {}", e.toString());
+    }
     return newAccount;
   }
 
   public Account updateAccount(long id, String data) {
-    return new Account();
+    Account updatedAccount = null;
+    try {
+      updatedAccount = objectMapper.readValue(data, Account.class);
+      updatedAccount.setId(id);
+      updatedAccount = accountRepository.save(updatedAccount);
+    } catch (IOException e) {
+      logger.error("IOException thrown in createAccount: {}", e.toString());
+    }
+    return updatedAccount;
   }
 
   public Account deleteAccount(long id) {
-    return new Account();
+    Account deletedAccount = accountRepository.findAccountById(id);
+    accountRepository.delete(deletedAccount);
+    return deletedAccount;
   }
 
   public List<Address> getAddressesByAccountId(long id) {
