@@ -16,7 +16,23 @@ public class AccountAddressService {
     return accountRepository.findAll();
   }
 
-  public Address getAddressByAccountId() {
-    return new Address();
+  public List<Address> getAddressByAccountId() {
+    return Arrays.asList(new Address());
+  }
+
+  public Account createAccount(long id) {
+    return new Account();
+  }
+
+  public Account updateAccount(long id) {
+    return new Account();
+  }
+
+  public Account deleteAccount(long id) {
+    return new Account();
+  }
+
+  public List<Address> createAddress(long id) {
+    return Arrays.asList(new Address());
   }
 }

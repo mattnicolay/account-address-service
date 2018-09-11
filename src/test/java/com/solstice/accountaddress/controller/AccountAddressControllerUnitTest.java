@@ -1,7 +1,11 @@
 package com.solstice.accountaddress.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.solstice.accountaddress.model.Account;
@@ -26,6 +30,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class AccountAddressControllerUnitTest {
 
   private Logger logger = LoggerFactory.getLogger(AccountAddressControllerUnitTest.class);
+  private final String GET = "GET";
+  private final String POST = "POST";
+  private final String PUT = "PUT";
+  private final String DELETE = "DELETE";
 
   @Mock
   private AccountAddressService accountAddressService;
@@ -41,30 +49,90 @@ public class AccountAddressControllerUnitTest {
   }
 
   @Test
-  public void accountsEndpointSuccessTest() {
+  public void getAccountsSuccessTest() {
     when(accountAddressService.getAccounts()).thenReturn(Arrays.asList(new Account()));
-    mockMvcPerformGet("/accounts", 200);
+    mockMvcPerform(GET,"/accounts", 200);
   }
 
   @Test
-  public void accountEndpointFailureTest() {
-    mockMvcPerformGet("/accounts", 404);
+  public void getAccountFailureTest() {
+    mockMvcPerform(GET,"/accounts", 404);
   }
 
   @Test
-  public void addressEndpointSuccessTest() {
-    when(accountAddressService.getAddressByAccountId()).thenReturn(new Address());
-    mockMvcPerformGet("/accounts/1/address", 200);
+  public void postAccountSuccessTest() {
+    when(accountAddressService.createAccount(any(Long.class))).thenReturn(new Account());
+    mockMvcPerform(POST,"/accounts/1", 201);
   }
 
   @Test
-  public void addressEndpointFailureTest() {
-    mockMvcPerformGet("/accounts/1/address", 404);
+  public void postAccountFailureTest() {
+    mockMvcPerform(POST,"/accounts/1", 500);
   }
 
-  private void mockMvcPerformGet(String endpoint, int expectedStatus) {
+
+  @Test
+  public void putAccountSuccessTest() {
+    when(accountAddressService.updateAccount(any(Long.class))).thenReturn(new Account());
+    mockMvcPerform(PUT,"/accounts/1", 200);
+  }
+
+  @Test
+  public void putAccountFailureTest() {
+    mockMvcPerform(PUT,"/accounts/1", 500);
+  }
+
+  @Test
+  public void deleteAccountSuccessTest() {
+    when(accountAddressService.deleteAccount(any(Long.class))).thenReturn(new Account());
+    mockMvcPerform(DELETE, "/accounts/1", 200);
+  }
+
+  @Test
+  public void deleteAccountFailureTest() {
+    mockMvcPerform(DELETE, "/accounts/1", 500);
+  }
+
+  @Test
+  public void getAccountAddressSuccessTest() {
+    when(accountAddressService.getAddressByAccountId()).thenReturn(Arrays.asList(new Address()));
+    mockMvcPerform(GET,"/accounts/1/address", 200);
+  }
+
+  @Test
+  public void getAddressFailureTest() {
+    mockMvcPerform(GET,"/accounts/1/address", 404);
+  }
+
+  @Test
+  public void postAddressSuccessTest() {
+    when(accountAddressService.createAddress(any(Long.class))).thenReturn(Arrays.asList(new Address()));
+    mockMvcPerform(POST,"/accounts/1/address", 201);
+  }
+
+  @Test
+  public void postAddressFailureTest() {
+    mockMvcPerform(POST,"/accounts/1/address", 500);
+  }
+
+  private void mockMvcPerform(String method, String endpoint, int expectedStatus) {
     try {
-      mockMvc.perform(get(endpoint)).andExpect(status().is(expectedStatus));
+      switch(method){
+        case GET:
+          mockMvc.perform(get(endpoint)).andExpect(status().is(expectedStatus));
+          break;
+        case POST:
+          mockMvc.perform(post(endpoint)).andExpect(status().is(expectedStatus));
+          break;
+        case PUT:
+          mockMvc.perform(put(endpoint)).andExpect(status().is(expectedStatus));
+          break;
+        case DELETE:
+          mockMvc.perform(delete(endpoint)).andExpect(status().is(expectedStatus));
+          break;
+        default:
+          logger.error("Unknown method '{}' given to mockMvcPerform", method);
+      }
     } catch (Exception e) {
       logger.error("Exception thrown: {}", e.toString());
     }
