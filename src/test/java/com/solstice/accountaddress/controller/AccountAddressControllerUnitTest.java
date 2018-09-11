@@ -95,7 +95,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void getAccountAddressSuccessTest() {
-    when(accountAddressService.getAddressByAccountId()).thenReturn(Arrays.asList(new Address()));
+    when(accountAddressService.getAddressesByAccountId(any(Long.class))).thenReturn(Arrays.asList(new Address()));
     mockMvcPerform(GET,"/accounts/1/address", 200);
   }
 

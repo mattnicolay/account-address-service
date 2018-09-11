@@ -16,7 +16,7 @@ public class AccountAddressService {
     return accountRepository.findAll();
   }
 
-  public List<Address> getAddressByAccountId() {
+  public List<Address> getAddressesByAccountId(long id) {
     return Arrays.asList(new Address());
   }
 

@@ -3,7 +3,6 @@ package com.solstice.accountaddress.controller;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
 import com.solstice.accountaddress.service.AccountAddressService;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -67,7 +66,7 @@ public class AccountAddressController {
 
   @GetMapping("/{id}/address")
   public ResponseEntity<List<Address>> getAddressByAccountId(@PathVariable("id") long id) {
-    List<Address> addresses = accountAddressService.getAddressByAccountId();
+    List<Address> addresses = accountAddressService.getAddressesByAccountId(id);
     return new ResponseEntity<>(
         addresses,
         new HttpHeaders(),
