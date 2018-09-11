@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,9 +35,9 @@ public class AccountAddressController {
         accounts.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
   }
 
-  @PostMapping("{id}")
-  public ResponseEntity<Account> createAccount(@PathVariable("id") long id) {
-    Account account = accountAddressService.createAccount(id);
+  @PostMapping
+  public ResponseEntity<Account> createAccount(@RequestBody String body) {
+    Account account = accountAddressService.createAccount(body);
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
@@ -45,8 +46,10 @@ public class AccountAddressController {
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<Account> updateAccount(@PathVariable("id") long id) {
-    Account account = accountAddressService.updateAccount(id);
+  public ResponseEntity<Account> updateAccount(
+      @PathVariable("id") long id,
+      @RequestBody String body) {
+    Account account = accountAddressService.updateAccount(id, body);
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
