@@ -35,6 +35,15 @@ public class AccountAddressController {
         accounts.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
   }
 
+  @GetMapping("{id}")
+  public ResponseEntity<Account> getAccountById(@PathVariable("id") long id) {
+    Account account = accountAddressService.getAccountById(id);
+    return new ResponseEntity<>(
+        account,
+        new HttpHeaders(),
+        account == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK);
+  }
+
   @PostMapping
   public ResponseEntity<Account> createAccount(@RequestBody String body) {
     Account account = accountAddressService.createAccount(body);
@@ -68,7 +77,7 @@ public class AccountAddressController {
   }
 
   @GetMapping("/{id}/address")
-  public ResponseEntity<List<Address>> getAddressByAccountId(@PathVariable("id") long id) {
+  public ResponseEntity<List<Address>> getAddress(@PathVariable("id") long id) {
     List<Address> addresses = accountAddressService.getAddressesByAccountId(id);
     return new ResponseEntity<>(
         addresses,
@@ -77,11 +86,38 @@ public class AccountAddressController {
   }
 
   @PostMapping("/{id}/address")
-  public ResponseEntity<List<Address>> createAddressByAccountId(@PathVariable("id") long id) {
-    List<Address> addresses = accountAddressService.createAddress(id);
+  public ResponseEntity<List<Address>> createAddress(
+      @PathVariable("id") long id,
+      @RequestBody String body) {
+    List<Address> addresses = accountAddressService.createAddress(id, body);
     return new ResponseEntity<>(
         addresses,
         new HttpHeaders(),
         addresses.isEmpty() ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED);
+  }
+
+  @PutMapping("/{accountId}/address/{addressId}")
+  public ResponseEntity<Address> updateAddress(
+      @PathVariable("accountId") long accountId,
+      @PathVariable("addressId") long addressId,
+      @RequestBody String body) {
+    Address address = accountAddressService.updateAddress(accountId, addressId, body);
+    return new ResponseEntity<>(
+        address,
+        new HttpHeaders(),
+        address == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{accountId}/address/{addressId}")
+  public ResponseEntity<Address> deleteAddress(
+      @PathVariable("accountId") long accountId,
+      @PathVariable("addressId") long addressId) {
+    Address address = accountAddressService.deleteAddress(accountId, addressId);
+
+    return new ResponseEntity<>(
+        address,
+        new HttpHeaders(),
+        address == null ? HttpStatus.NOT_FOUND : HttpStatus.OK
+    );
   }
 }

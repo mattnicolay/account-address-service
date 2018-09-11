@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -93,7 +94,6 @@ public class AccountAddressServiceUnitTest {
     when(accountRepository.findAll()).thenReturn(Arrays.asList(account1, account2, account3));
     List<Account> accounts = accountAddressService.getAccounts();
 
-    assertThat(accounts, is(notNullValue()));
     assertFalse(accounts.isEmpty());
     accounts.forEach(account -> {
       assertThat(account, is(notNullValue()));
@@ -110,6 +110,21 @@ public class AccountAddressServiceUnitTest {
 
     assertThat(accounts, is(notNullValue()));
     assertTrue(accounts.isEmpty());
+  }
+
+  @Test
+  public void getAccountByIdReturnedAccountHasValuesTest() {
+    when(accountRepository.findAccountById(anyLong())).thenReturn(account1);
+    Account account = accountAddressService.getAccountById(1);
+
+    assertThatAccountsAreEqual(account, account1);
+  }
+
+  @Test
+  public void getAccountByIdFailureTest() {
+    Account account = accountAddressService.getAccountById(1);
+
+    assertThat(account, is(nullValue()));
   }
 
   @Test
@@ -159,7 +174,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void deleteAccountReturnedAccountHasValuesTest() {
-    when(accountRepository.findAccountById(any(Long.class))).thenReturn(account1);
+    when(accountRepository.findAccountById(anyLong())).thenReturn(account1);
     Account account = accountAddressService.deleteAccount(1);
 
     assertThat(account, is(notNullValue()));
@@ -175,7 +190,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void getAddressesByAccountIdReturnedListHasValuesTest() {
-    when(accountRepository.findAddressesById(any(Long.class))).thenReturn(Arrays.asList(
+    when(accountRepository.findAddressesById(anyLong())).thenReturn(Arrays.asList(
         address1,
         address2,
         address3
@@ -203,17 +218,36 @@ public class AccountAddressServiceUnitTest {
     assertTrue(addresses.isEmpty());
   }
 
-  private void assertThatAccountsAreEqual(Account account1, Account account2) {
-    assertThat(account1, is(notNullValue()));
-    assertThat(account1.getId(), is(equalTo(account2.getId())));
-    assertThat(account1.getFirstName(), is(notNullValue()));
-    assertThat(account1.getFirstName(), is(equalTo(account2.getFirstName())));
-    assertThat(account1.getLastName(), is(notNullValue()));
-    assertThat(account1.getLastName(), is(equalTo(account2.getLastName())));
-    assertThat(account1.getEmail(), is(notNullValue()));
-    assertThat(account1.getEmail(), is(equalTo(account2.getEmail())));
-    assertThat(account1.getAddresses(), is(notNullValue()));
-    assertThat(account1.getAddresses(), is(equalTo(account2.getAddresses())));
+  @Test
+  public void getAddressByAccountIdReturnedAddressHasValuesTest() {
+    Address address = accountAddressService.getAddressById(1, 1);
+
+    assertThat(address, is(notNullValue()));
+    assertThat(address.getStreet(), is(notNullValue()));
+    assertThat(address.getStreet(), is(equalTo(address1.getStreet())));
+    assertThat(address.getApartment(), is(notNullValue()));
+    assertThat(address.getApartment(), is(equalTo(address1.getApartment())));
+    assertThat(address.getCity(), is(notNullValue()));
+    assertThat(address.getCity(), is(equalTo(address1.getCity())));
+    assertThat(address.getState(), is(notNullValue()));
+    assertThat(address.getState(), is(equalTo(address1.getState())));
+    assertThat(address.getZip(), is(notNullValue()));
+    assertThat(address.getZip(), is(equalTo(address1.getZip())));
+    assertThat(address.getCountry(), is(notNullValue()));
+    assertThat(address.getCountry(), is(equalTo(address1.getCountry())));
+  }
+
+  private void assertThatAccountsAreEqual(Account actual, Account expected) {
+    assertThat(actual, is(notNullValue()));
+    assertThat(actual.getId(), is(equalTo(expected.getId())));
+    assertThat(actual.getFirstName(), is(notNullValue()));
+    assertThat(actual.getFirstName(), is(equalTo(expected.getFirstName())));
+    assertThat(actual.getLastName(), is(notNullValue()));
+    assertThat(actual.getLastName(), is(equalTo(expected.getLastName())));
+    assertThat(actual.getEmail(), is(notNullValue()));
+    assertThat(actual.getEmail(), is(equalTo(expected.getEmail())));
+    assertThat(actual.getAddresses(), is(notNullValue()));
+    assertThat(actual.getAddresses(), is(equalTo(expected.getAddresses())));
   }
 
   private Account callMethodWithJsonValue(String method, Account account) {

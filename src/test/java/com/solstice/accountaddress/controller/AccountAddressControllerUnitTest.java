@@ -1,6 +1,7 @@
 package com.solstice.accountaddress.controller;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
 import com.solstice.accountaddress.service.AccountAddressService;
@@ -72,27 +72,30 @@ public class AccountAddressControllerUnitTest {
   }
 
   @Test
-  public void getAccountFailureTest() {
+  public void getAccountsFailureTest() {
     mockMvcPerform(GET,"/accounts", 404, "");
   }
 
   @Test
+  public void getAccountByIdSuccessTest() {
+    when(accountAddressService.getAccountById(anyLong())).thenReturn(account);
+    mockMvcPerform(GET, "/accounts/1", 200, "");
+  }
+
+  @Test
+  public void getAccountByIdFailureTest() {
+    mockMvcPerform(GET, "/accounts/1", 500, "");
+  }
+
+  @Test
   public void postAccountSuccessTest() {
-    when(accountAddressService.createAccount(any(String.class))).thenReturn(new Account());
-    try {
-      mockMvcPerform(POST,"/accounts", 201, objectMapper.writeValueAsString(account));
-    } catch (JsonProcessingException e) {
-      logger.error("JsonProcessingException thrown: {}", e.toString());
-    }
+    when(accountAddressService.createAccount(anyString())).thenReturn(new Account());
+    mockMvcPerform(POST,"/accounts", 201, toJson(account));
   }
 
   @Test
   public void postAccountFailureTest() {
-    try {
-      mockMvcPerform(POST,"/accounts", 500, objectMapper.writeValueAsString(account));
-    } catch (JsonProcessingException e) {
-      logger.error("JsonProcessingException thrown: {}", e.toString());
-    }
+    mockMvcPerform(POST,"/accounts", 500, toJson(account));
   }
 
   @Test
@@ -103,21 +106,13 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void putAccountSuccessTest() {
-    when(accountAddressService.updateAccount(any(Long.class), any(String.class))).thenReturn(new Account());
-    try {
-      mockMvcPerform(PUT,"/accounts/1", 200, objectMapper.writeValueAsString(account));
-    } catch (JsonProcessingException e) {
-      logger.error("JsonProcessingException thrown: {}", e.toString());
-    }
+    when(accountAddressService.updateAccount(anyLong(), anyString())).thenReturn(new Account());
+    mockMvcPerform(PUT,"/accounts/1", 200, toJson(account));
   }
 
   @Test
   public void putAccountFailureTest() {
-    try {
-      mockMvcPerform(PUT,"/accounts/1", 500, objectMapper.writeValueAsString(account));
-    } catch (JsonProcessingException e) {
-      logger.error("JsonProcessingException thrown: {}", e.toString());
-    }
+    mockMvcPerform(PUT,"/accounts/1", 500, toJson(account));
   }
 
   @Test
@@ -127,7 +122,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void deleteAccountSuccessTest() {
-    when(accountAddressService.deleteAccount(any(Long.class))).thenReturn(new Account());
+    when(accountAddressService.deleteAccount(anyLong())).thenReturn(new Account());
     mockMvcPerform(DELETE, "/accounts/1", 200, "");
   }
 
@@ -138,7 +133,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void getAccountAddressSuccessTest() {
-    when(accountAddressService.getAddressesByAccountId(any(Long.class))).thenReturn(Arrays.asList(new Address()));
+    when(accountAddressService.getAddressesByAccountId(anyLong())).thenReturn(Arrays.asList(new Address()));
     mockMvcPerform(GET,"/accounts/1/address", 200, "");
   }
 
@@ -149,29 +144,67 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void postAddressSuccessTest() {
-    when(accountAddressService.createAddress(any(Long.class))).thenReturn(Arrays.asList(new Address()));
-    try {
-      mockMvcPerform(POST,"/accounts/1/address", 201, objectMapper.writeValueAsString(address));
-    } catch (JsonProcessingException e) {
-      logger.error("JsonProcessingException thrown: {}", e.toString());
-    }
+    when(accountAddressService.createAddress(anyLong(), anyString())).thenReturn(Arrays.asList(new Address()));
+    mockMvcPerform(POST,"/accounts/1/address", 201, toJson(address));
   }
 
   @Test
   public void postAddressFailureTest() {
+    mockMvcPerform(POST,"/accounts/1/address", 500, toJson(address));
+  }
+
+  @Test
+  public void postAddressEmptyBodyTest() {
+    mockMvcPerform(POST,"/accounts/1/address", 400, "");
+  }
+
+  @Test
+  public void putAddressSuccessTest() {
+    when(accountAddressService.updateAddress(anyLong(), anyLong(), anyString())).thenReturn(address);
+    mockMvcPerform(PUT, "/accounts/1/address/1", 200, toJson(address));
+  }
+
+  @Test
+  public void putAddressNotFoundTest() {
+    mockMvcPerform(PUT, "/accounts/1/address/1", 404, toJson(address));
+  }
+
+  @Test
+  public void putAddressEmptyBodyTest() {
+    mockMvcPerform(PUT, "/accounts/1/address/1", 400, "");
+  }
+
+  @Test
+  public void deleteAddressSuccessTest() {
+    when(accountAddressService.deleteAddress(anyLong(), anyLong())).thenReturn(address);
+    mockMvcPerform(DELETE, "/accounts/1/address/1", 200, "");
+  }
+
+  @Test
+  public void deleteAddressNotFoundTest() {
+    mockMvcPerform(DELETE, "/accounts/1/address/1", 404, "");
+  }
+
+
+
+  private String toJson(Object value) {
+    String result = null;
     try {
-      mockMvcPerform(POST,"/accounts/1/address", 500, objectMapper.writeValueAsString(address));
+      result = objectMapper.writeValueAsString(value);
     } catch (JsonProcessingException e) {
       logger.error("JsonProcessingException thrown: {}", e.toString());
     }
+    return result;
   }
 
   private void mockMvcPerform(String method, String endpoint, int expectedStatus, String requestBody) {
     try {
       switch(method){
+
         case GET:
           mockMvc.perform(get(endpoint)).andExpect(status().is(expectedStatus));
           break;
+
         case POST:
           mockMvc.perform(
               post(endpoint)
@@ -179,6 +212,7 @@ public class AccountAddressControllerUnitTest {
               .content(requestBody)
           ).andExpect(status().is(expectedStatus));
           break;
+
         case PUT:
           mockMvc.perform(
               put(endpoint)
@@ -186,9 +220,11 @@ public class AccountAddressControllerUnitTest {
               .content(requestBody)
           ).andExpect(status().is(expectedStatus));
           break;
+
         case DELETE:
           mockMvc.perform(delete(endpoint)).andExpect(status().is(expectedStatus));
           break;
+
         default:
           logger.error("Unknown method '{}' given to mockMvcPerform", method);
       }

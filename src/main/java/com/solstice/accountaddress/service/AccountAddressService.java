@@ -29,6 +29,10 @@ public class AccountAddressService {
     return accountRepository.findAll();
   }
 
+  public Account getAccountById(long id) {
+    return accountRepository.findAccountById(id);
+  }
+
   public Account createAccount(String data) {
     Account newAccount = null;
     try {
@@ -53,7 +57,7 @@ public class AccountAddressService {
   }
 
   public Account deleteAccount(long id) {
-    Account deletedAccount = accountRepository.findAccountById(id);
+    Account deletedAccount = getAccountById(id);
     accountRepository.delete(deletedAccount);
     return deletedAccount;
   }
@@ -62,7 +66,19 @@ public class AccountAddressService {
     return accountRepository.findAddressesById(id);
   }
 
-  public List<Address> createAddress(long id) {
+  public List<Address> createAddress(long id, String body) {
     return Arrays.asList(new Address());
+  }
+
+  public Address getAddressById(int accountId, int addressId) {
+    return new Address();
+  }
+
+  public Address updateAddress(long accountId, long addressId, String body) {
+    return new Address();
+  }
+
+  public Address deleteAddress(long accountId, long addressId) {
+    return new Address();
   }
 }
