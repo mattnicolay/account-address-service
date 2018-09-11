@@ -1,10 +1,10 @@
 package com.solstice.accountaddress.service;
 
 import com.solstice.accountaddress.dao.AccountRepository;
+import com.solstice.accountaddress.dao.AddressRepository;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -17,11 +17,12 @@ public class AccountAddressService {
   private Logger logger = LoggerFactory.getLogger(AccountAddressService.class);
 
   private ObjectMapper objectMapper;
-
   private AccountRepository accountRepository;
+  private AddressRepository addressRepository;
 
-  public AccountAddressService(AccountRepository accountRepository) {
+  public AccountAddressService(AccountRepository accountRepository, AddressRepository addressRepository) {
     this.accountRepository = accountRepository;
+    this.addressRepository = addressRepository;
     objectMapper = new ObjectMapper();
   }
 
@@ -34,25 +35,18 @@ public class AccountAddressService {
   }
 
   public Account createAccount(String data) {
-    Account newAccount = null;
-    try {
-      newAccount = objectMapper.readValue(data, Account.class);
-      newAccount = accountRepository.save(newAccount);
-    } catch (IOException e) {
-      logger.error("IOException thrown in createAccount: {}", e.toString());
-    }
+    Account newAccount = getAccountFromJson(data);
+    newAccount = accountRepository.save(newAccount);
     return newAccount;
   }
 
   public Account updateAccount(long id, String data) {
-    Account updatedAccount = null;
-    try {
-      updatedAccount = objectMapper.readValue(data, Account.class);
-      updatedAccount.setId(id);
-      updatedAccount = accountRepository.save(updatedAccount);
-    } catch (IOException e) {
-      logger.error("IOException thrown in createAccount: {}", e.toString());
+    Account updatedAccount = getAccountFromJson(data);
+    if (updatedAccount == null) {
+      return null;
     }
+    updatedAccount.setId(id);
+    updatedAccount = accountRepository.save(updatedAccount);
     return updatedAccount;
   }
 
@@ -66,19 +60,55 @@ public class AccountAddressService {
     return accountRepository.findAddressesById(id);
   }
 
-  public List<Address> createAddress(long id, String body) {
-    return Arrays.asList(new Address());
+  public Address getAddressById(int accountId, int addressId) {
+    return accountRepository.findAddressByIdAndAddressId(accountId, addressId);
   }
 
-  public Address getAddressById(int accountId, int addressId) {
-    return new Address();
+  public Address createAddress(long id, String body) {
+    Address address= getAddressFromJson(body);
+    Account account = accountRepository.findAccountById(id);
+    if (account == null) {
+      return null;
+    }
+    account.addAddress(address);
+    accountRepository.save(account);
+    return address;
   }
 
   public Address updateAddress(long accountId, long addressId, String body) {
-    return new Address();
+    Address updatedAddress = null;
+    Address dbAddress = accountRepository.findAddressByIdAndAddressId(accountId, addressId);
+    if(dbAddress != null) {
+      updatedAddress = getAddressFromJson(body);
+      updatedAddress.setId(addressId);
+      addressRepository.save(updatedAddress);
+    }
+    return updatedAddress;
   }
 
   public Address deleteAddress(long accountId, long addressId) {
-    return new Address();
+    Address deletedAddress = accountRepository.findAddressByIdAndAddressId(accountId, addressId);
+    addressRepository.delete(deletedAddress);
+    return deletedAddress;
+  }
+
+  private Account getAccountFromJson(String json) {
+    Account account = null;
+    try {
+      account = objectMapper.readValue(json, Account.class);
+    } catch (IOException e) {
+      logger.error("IOException thrown in getAccountFromJson: {}", e.toString());
+    }
+    return account;
+  }
+
+  private Address getAddressFromJson(String json) {
+    Address address = null;
+    try {
+      address = objectMapper.readValue(json, Address.class);
+    } catch (IOException e) {
+      logger.error("IOException thrown in getAddressFromJson: {}", e.toString());
+    }
+    return address;
   }
 }

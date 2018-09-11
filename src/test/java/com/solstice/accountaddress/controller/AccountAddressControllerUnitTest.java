@@ -144,7 +144,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void postAddressSuccessTest() {
-    when(accountAddressService.createAddress(anyLong(), anyString())).thenReturn(Arrays.asList(new Address()));
+    when(accountAddressService.createAddress(anyLong(), anyString())).thenReturn(new Address());
     mockMvcPerform(POST,"/accounts/1/address", 201, toJson(address));
   }
 

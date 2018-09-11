@@ -86,14 +86,14 @@ public class AccountAddressController {
   }
 
   @PostMapping("/{id}/address")
-  public ResponseEntity<List<Address>> createAddress(
+  public ResponseEntity<Address> createAddress(
       @PathVariable("id") long id,
       @RequestBody String body) {
-    List<Address> addresses = accountAddressService.createAddress(id, body);
+    Address address = accountAddressService.createAddress(id, body);
     return new ResponseEntity<>(
-        addresses,
+        address,
         new HttpHeaders(),
-        addresses.isEmpty() ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED);
+        address == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED);
   }
 
   @PutMapping("/{accountId}/address/{addressId}")

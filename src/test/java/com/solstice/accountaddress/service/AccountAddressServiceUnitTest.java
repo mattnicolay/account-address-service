@@ -14,8 +14,10 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solstice.accountaddress.dao.AccountRepository;
+import com.solstice.accountaddress.dao.AddressRepository;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
@@ -39,6 +41,8 @@ public class AccountAddressServiceUnitTest {
 
   @Mock
   private AccountRepository accountRepository;
+  @Mock
+  private AddressRepository addressRepository;
 
   @InjectMocks
   private AccountAddressService accountAddressService;
@@ -50,8 +54,6 @@ public class AccountAddressServiceUnitTest {
   private Address address1;
   private Address address2;
   private Address address3;
-
-  private ObjectMapper objectMapper = new ObjectMapper();
 
 
   @Before
@@ -82,9 +84,14 @@ public class AccountAddressServiceUnitTest {
         "United States"
     );
 
-    account1 = new Account("Jane", "Doe", "jdoe@gmail.com", Arrays.asList(address1, address2));
-    account2 = new Account("John", "Smith", "jsmith@gmail.com", Arrays.asList(address2, address3));
-    account3 = new Account("Bill", "Murray", "bmurray@gmail.com", Arrays.asList(address3, address1));
+    List<Address> addresses = new ArrayList<>();
+    addresses.add(address1);
+    addresses.add(address2);
+    addresses.add(address3);
+
+    account1 = new Account("Jane", "Doe", "jdoe@gmail.com", addresses.subList(1,2));
+    account2 = new Account("John", "Smith", "jsmith@gmail.com", addresses.subList(2,3));
+    account3 = new Account("Bill", "Murray", "bmurray@gmail.com", addresses);
 
 
   }
@@ -130,14 +137,14 @@ public class AccountAddressServiceUnitTest {
   @Test
   public void createAccountReturnedAccountHasValuesTest() {
     when(accountRepository.save(any())).thenReturn(account1);
-    Account account = callMethodWithJsonValue(CREATE, account1);
+    Account account = accountAddressService.createAccount(toJson(account1));
 
     assertThatAccountsAreEqual(account, account1);
   }
 
   @Test
   public void createAccountFailureTest() {
-    Account account = callMethodWithJsonValue(CREATE, account1);
+    Account account = accountAddressService.createAccount(toJson(account1));
 
     assertThat(account, is(nullValue()));
   }
@@ -152,14 +159,14 @@ public class AccountAddressServiceUnitTest {
   @Test
   public void updateAccountReturnedAccountHasValuesTest() {
     when(accountRepository.save(any())).thenReturn(account1);
-    Account account = callMethodWithJsonValue(UPDATE, account1);
+    Account account = accountAddressService.updateAccount(1, toJson(account1));
 
     assertThatAccountsAreEqual(account, account1);
   }
 
   @Test
   public void updateAccountRepositoryFailureTest() {
-    Account account = callMethodWithJsonValue(UPDATE, account1);
+    Account account = accountAddressService.updateAccount(1, toJson(account1));
 
     assertThat(account, is(nullValue()));
 
@@ -220,21 +227,85 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void getAddressByAccountIdReturnedAddressHasValuesTest() {
+    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
     Address address = accountAddressService.getAddressById(1, 1);
 
-    assertThat(address, is(notNullValue()));
-    assertThat(address.getStreet(), is(notNullValue()));
-    assertThat(address.getStreet(), is(equalTo(address1.getStreet())));
-    assertThat(address.getApartment(), is(notNullValue()));
-    assertThat(address.getApartment(), is(equalTo(address1.getApartment())));
-    assertThat(address.getCity(), is(notNullValue()));
-    assertThat(address.getCity(), is(equalTo(address1.getCity())));
-    assertThat(address.getState(), is(notNullValue()));
-    assertThat(address.getState(), is(equalTo(address1.getState())));
-    assertThat(address.getZip(), is(notNullValue()));
-    assertThat(address.getZip(), is(equalTo(address1.getZip())));
-    assertThat(address.getCountry(), is(notNullValue()));
-    assertThat(address.getCountry(), is(equalTo(address1.getCountry())));
+    assertThatAddressesAreEqual(address, address1);
+  }
+
+  @Test
+  public void getAddressByAccountIdFailureTest() {
+    Address address = accountAddressService.getAddressById(1, 1);
+
+    assertThat(address, is(nullValue()));
+  }
+
+  @Test
+  public void createAddressReturnedAddressHasValuesTest() {
+    when(accountRepository.findAccountById(anyLong())).thenReturn(account1);
+    Address address = accountAddressService.createAddress(1, toJson(address1));
+
+    assertThatAddressesAreEqual(address, address1);
+  }
+
+  @Test
+  public void createAddressAccountNotFoundTest() {
+    Address address = accountAddressService.createAddress(4, toJson(address1));
+
+    assertThat(address, is(nullValue()));
+  }
+
+  @Test
+  public void createAddressJsonParseFailureTest() {
+    Address address = accountAddressService.createAddress(4, "{wrong format)");
+
+    assertThat(address, is(nullValue()));
+  }
+
+  @Test
+  public void updateAddressReturnedAddressHasValuesTest() {
+    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
+    Address address = accountAddressService.updateAddress(1, 1, toJson(address1));
+
+    assertThatAddressesAreEqual(address, address1);
+  }
+
+  @Test
+  public void updateAddressNotFoundTest() {
+    Address address = accountAddressService.updateAddress(1, 3, toJson(address1));
+
+    assertThat(address, is(nullValue()));
+  }
+
+  @Test
+  public void updateAddressJsonParseFailureTest() {
+    Address address = accountAddressService.updateAddress(1, 1, "{wrong format)");
+
+    assertThat(address, is(nullValue()));
+  }
+
+  @Test
+  public void deleteAddressReturnedAddressHasValuesTest() {
+    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
+    Address address = accountAddressService.deleteAddress(1, 1);
+
+    assertThatAddressesAreEqual(address, address1);
+  }
+
+  private void assertThatAddressesAreEqual(Address actual, Address expected) {
+    assertThat(actual, is(notNullValue()));
+    assertThat(actual.getStreet(), is(notNullValue()));
+    assertThat(actual.getStreet(), is(equalTo(expected.getStreet())));
+    assertThat(actual.getApartment(), is(notNullValue()));
+    assertThat(actual.getApartment(), is(equalTo(expected.getApartment())));
+    assertThat(actual.getCity(), is(notNullValue()));
+    assertThat(actual.getCity(), is(equalTo(expected.getCity())));
+    assertThat(actual.getState(), is(notNullValue()));
+    assertThat(actual.getState(), is(equalTo(expected.getState())));
+    assertThat(actual.getZip(), is(notNullValue()));
+    assertThat(actual.getZip(), is(equalTo(expected.getZip())));
+    assertThat(actual.getCountry(), is(notNullValue()));
+    assertThat(actual.getCountry(), is(equalTo(expected.getCountry())));
   }
 
   private void assertThatAccountsAreEqual(Account actual, Account expected) {
@@ -250,19 +321,11 @@ public class AccountAddressServiceUnitTest {
     assertThat(actual.getAddresses(), is(equalTo(expected.getAddresses())));
   }
 
-  private Account callMethodWithJsonValue(String method, Account account) {
-    Account result = null;
+  private String toJson(Object object) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    String result = null;
     try {
-      switch(method) {
-        case CREATE:
-          result = accountAddressService.createAccount(objectMapper.writeValueAsString(account));
-          break;
-        case UPDATE:
-          result = accountAddressService.updateAccount(1, objectMapper.writeValueAsString(account));
-          break;
-        default:
-          logger.error("Unknown method '{}' given to callMethodWithJsonValue", method);
-      }
+      result = objectMapper.writeValueAsString(object);
     } catch (JsonProcessingException e) {
       logger.error("JsonProcessingException thrown: {}", e.toString());
     }
