@@ -60,7 +60,7 @@ public class AccountAddressService {
     return accountRepository.findAddressesByAccountId(id);
   }
 
-  public Address getAddressById(int accountId, int addressId) {
+  public Address getAddressByAccountIdAndAddressId(long accountId, long addressId) {
     return addressRepository.findAddressByIdAndAccountId(addressId, accountId);
   }
 

@@ -226,16 +226,16 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void getAddressByAccountIdReturnedAddressHasValuesTest() {
+  public void getAddressByAccountIdAndAddressIdReturnedAddressHasValuesTest() {
     when(addressRepository.findAddressByIdAndAccountId(anyLong(), anyLong())).thenReturn(address1);
-    Address address = accountAddressService.getAddressById(1, 1);
+    Address address = accountAddressService.getAddressByAccountIdAndAddressId(1, 1);
 
     assertThatAddressesAreEqual(address, address1);
   }
 
   @Test
-  public void getAddressByAccountIdFailureTest() {
-    Address address = accountAddressService.getAddressById(1, 1);
+  public void getAddressByAccountIdAndAddressIdFailureTest() {
+    Address address = accountAddressService.getAddressByAccountIdAndAddressId(1, 1);
 
     assertThat(address, is(nullValue()));
   }

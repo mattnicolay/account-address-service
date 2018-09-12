@@ -96,6 +96,19 @@ public class AccountAddressController {
         address == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED);
   }
 
+  @GetMapping("{accountId}/address/{addressId}")
+  public ResponseEntity<Address> getAddressById(
+      @PathVariable("accountId") long accountId,
+      @PathVariable("addressId") long addressId) {
+    Address address = accountAddressService.getAddressByAccountIdAndAddressId(accountId, addressId);
+    return new ResponseEntity<>(
+        address,
+        new HttpHeaders(),
+        address == null ? HttpStatus.NOT_FOUND : HttpStatus.OK
+    );
+  }
+
+
   @PutMapping("/{accountId}/address/{addressId}")
   public ResponseEntity<Address> updateAddress(
       @PathVariable("accountId") long accountId,

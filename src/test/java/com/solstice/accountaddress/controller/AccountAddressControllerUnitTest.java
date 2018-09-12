@@ -143,6 +143,17 @@ public class AccountAddressControllerUnitTest {
   }
 
   @Test
+  public void getAddressByIdSuccessTest() {
+    when(accountAddressService.getAddressByAccountIdAndAddressId(anyLong(), anyLong())).thenReturn(address);
+    mockMvcPerform(GET, "/accounts/1/address/1", 200, "");
+  }
+
+  @Test
+  public void getAddressByIdNotFoundTest() {
+    mockMvcPerform(GET, "/accounts/1/address/1", 404, "");
+  }
+
+  @Test
   public void postAddressSuccessTest() {
     when(accountAddressService.createAddress(anyLong(), anyString())).thenReturn(new Address());
     mockMvcPerform(POST,"/accounts/1/address", 201, toJson(address));
