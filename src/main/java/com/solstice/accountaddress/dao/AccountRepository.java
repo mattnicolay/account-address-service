@@ -13,8 +13,6 @@ public interface AccountRepository extends CrudRepository<Account, Long> {
 
   Account findAccountById(long id);
 
-  List<Address> findAddressesById(long id);
-
-  @Query(nativeQuery = true)
-  Address findAddressByIdAndAddressId(@Param("accountId") long accountId, @Param("addressId") long addressId);
+  @Query("select a.addresses from Account a where a.id = :id")
+  List<Address> findAddressesByAccountId(@Param("id") long id);
 }

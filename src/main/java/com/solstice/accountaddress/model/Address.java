@@ -1,11 +1,33 @@
 package com.solstice.accountaddress.model;
 
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 
 @Entity
+@SqlResultSetMapping(name="AddressInAccountMapping", classes = {
+    @ConstructorResult(targetClass = Address.class,
+        columns = {
+            @ColumnResult(name="street", type=String.class),
+            @ColumnResult(name="apartment", type=String.class),
+            @ColumnResult(name="city", type=String.class),
+            @ColumnResult(name="state", type=String.class),
+            @ColumnResult(name="zip", type=String.class),
+            @ColumnResult(name="country", type=String.class)
+        })
+})
+@NamedNativeQuery(
+    name = "Address.findAddressByIdAndAccountId",
+    query = "select street, apartment, city, state, zip, country "
+        + "from address "
+        + "where id = :addressId and :accountId = account_id",
+    resultSetMapping = "AddressInAccountMapping"
+)
 public class Address {
 
   @Id

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <Account id="1" first_name="Lena" last_name="Raine" email="lraine@gmail.com"/>
+  <Account id="2" first_name="Bill" last_name="Gates" email="bgates@microsoft.com"/>
+  <Account id="3" first_name="Lady" last_name="Gaga" email="lgaga@gmail.com"/>
+
+  <Address id="1" street="111 N Canal St" apartment="700" city="Chicago" state="IL" zip="60606" country="United States" account_id="1"/>
+  <Address id="2" street="233 S Wacker Dr" apartment="4305" city="Chicago" state="IL" zip="60606" country="United States" account_id="2"/>
+  <Address id="3" street="405 Lexington Ave" apartment="512" city="New York" state="NY" zip="10174" country="United States" account_id="3"/>
+  <Address id="4" street="405 Lexington Ave" apartment="6502" city="New York" state="NY" zip="10174" country="United States" account_id="1"/>
+</dataset>

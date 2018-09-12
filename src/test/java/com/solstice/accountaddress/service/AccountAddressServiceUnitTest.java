@@ -197,7 +197,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void getAddressesByAccountIdReturnedListHasValuesTest() {
-    when(accountRepository.findAddressesById(anyLong())).thenReturn(Arrays.asList(
+    when(accountRepository.findAddressesByAccountId(anyLong())).thenReturn(Arrays.asList(
         address1,
         address2,
         address3
@@ -227,7 +227,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void getAddressByAccountIdReturnedAddressHasValuesTest() {
-    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
+    when(addressRepository.findAddressByIdAndAccountId(anyLong(), anyLong())).thenReturn(address1);
     Address address = accountAddressService.getAddressById(1, 1);
 
     assertThatAddressesAreEqual(address, address1);
@@ -264,7 +264,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void updateAddressReturnedAddressHasValuesTest() {
-    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
+    when(addressRepository.findAddressByIdAndAccountId(anyLong(), anyLong())).thenReturn(address1);
     Address address = accountAddressService.updateAddress(1, 1, toJson(address1));
 
     assertThatAddressesAreEqual(address, address1);
@@ -286,7 +286,7 @@ public class AccountAddressServiceUnitTest {
 
   @Test
   public void deleteAddressReturnedAddressHasValuesTest() {
-    when(accountRepository.findAddressByIdAndAddressId(anyLong(), anyLong())).thenReturn(address1);
+    when(addressRepository.findAddressByIdAndAccountId(anyLong(), anyLong())).thenReturn(address1);
     Address address = accountAddressService.deleteAddress(1, 1);
 
     assertThatAddressesAreEqual(address, address1);

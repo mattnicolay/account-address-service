@@ -57,11 +57,11 @@ public class AccountAddressService {
   }
 
   public List<Address> getAddressesByAccountId(long id) {
-    return accountRepository.findAddressesById(id);
+    return accountRepository.findAddressesByAccountId(id);
   }
 
   public Address getAddressById(int accountId, int addressId) {
-    return accountRepository.findAddressByIdAndAddressId(accountId, addressId);
+    return addressRepository.findAddressByIdAndAccountId(addressId, accountId);
   }
 
   public Address createAddress(long id, String body) {
@@ -77,7 +77,7 @@ public class AccountAddressService {
 
   public Address updateAddress(long accountId, long addressId, String body) {
     Address updatedAddress = null;
-    Address dbAddress = accountRepository.findAddressByIdAndAddressId(accountId, addressId);
+    Address dbAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
     if(dbAddress != null) {
       updatedAddress = getAddressFromJson(body);
       updatedAddress.setId(addressId);
@@ -87,7 +87,7 @@ public class AccountAddressService {
   }
 
   public Address deleteAddress(long accountId, long addressId) {
-    Address deletedAddress = accountRepository.findAddressByIdAndAddressId(accountId, addressId);
+    Address deletedAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
     addressRepository.delete(deletedAddress);
     return deletedAddress;
   }
