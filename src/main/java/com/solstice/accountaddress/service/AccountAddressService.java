@@ -34,13 +34,13 @@ public class AccountAddressService {
     return accountRepository.findAccountById(id);
   }
 
-  public Account createAccount(String data) {
+  public Account createAccount(String data) throws IOException {
     Account newAccount = getAccountFromJson(data);
     newAccount = accountRepository.save(newAccount);
     return newAccount;
   }
 
-  public Account updateAccount(long id, String data) {
+  public Account updateAccount(long id, String data) throws IOException {
     Account updatedAccount = getAccountFromJson(data);
     if (updatedAccount == null) {
       return null;
@@ -64,7 +64,7 @@ public class AccountAddressService {
     return addressRepository.findAddressByIdAndAccountId(addressId, accountId);
   }
 
-  public Address createAddress(long id, String body) {
+  public Address createAddress(long id, String body) throws IOException {
     Address address= getAddressFromJson(body);
     Account account = accountRepository.findAccountById(id);
     if (account == null) {
@@ -75,7 +75,7 @@ public class AccountAddressService {
     return address;
   }
 
-  public Address updateAddress(long accountId, long addressId, String body) {
+  public Address updateAddress(long accountId, long addressId, String body) throws IOException {
     Address updatedAddress = null;
     Address dbAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
     if(dbAddress != null) {
@@ -92,23 +92,15 @@ public class AccountAddressService {
     return deletedAddress;
   }
 
-  private Account getAccountFromJson(String json) {
+  private Account getAccountFromJson(String json) throws IOException {
     Account account = null;
-    try {
-      account = objectMapper.readValue(json, Account.class);
-    } catch (IOException e) {
-      logger.error("IOException thrown in getAccountFromJson: {}", e.toString());
-    }
+    account = objectMapper.readValue(json, Account.class);
     return account;
   }
 
-  private Address getAddressFromJson(String json) {
+  private Address getAddressFromJson(String json) throws IOException {
     Address address = null;
-    try {
-      address = objectMapper.readValue(json, Address.class);
-    } catch (IOException e) {
-      logger.error("IOException thrown in getAddressFromJson: {}", e.toString());
-    }
+    address = objectMapper.readValue(json, Address.class);
     return address;
   }
 }

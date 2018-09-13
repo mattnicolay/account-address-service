@@ -17,6 +17,7 @@ import com.solstice.accountaddress.dao.AccountRepository;
 import com.solstice.accountaddress.dao.AddressRepository;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -135,7 +136,7 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void createAccountReturnedAccountHasValuesTest() {
+  public void createAccountReturnedAccountHasValuesTest() throws IOException {
     when(accountRepository.save(any())).thenReturn(account1);
     Account account = accountAddressService.createAccount(toJson(account1));
 
@@ -143,21 +144,19 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void createAccountFailureTest() {
+  public void createAccountFailureTest() throws IOException {
     Account account = accountAddressService.createAccount(toJson(account1));
 
     assertThat(account, is(nullValue()));
   }
 
-  @Test
-  public void createAccountJacksonFailureTest() {
-    Account account = accountAddressService.createAccount("{wrong format)");
-
-    assertThat(account, is(nullValue()));
+  @Test(expected = IOException.class)
+  public void createAccountJacksonFailureTest() throws IOException {
+    accountAddressService.createAccount("{wrong format)");
   }
 
   @Test
-  public void updateAccountReturnedAccountHasValuesTest() {
+  public void updateAccountReturnedAccountHasValuesTest() throws IOException {
     when(accountRepository.save(any())).thenReturn(account1);
     Account account = accountAddressService.updateAccount(1, toJson(account1));
 
@@ -165,18 +164,16 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void updateAccountRepositoryFailureTest() {
+  public void updateAccountRepositoryFailureTest() throws IOException {
     Account account = accountAddressService.updateAccount(1, toJson(account1));
 
     assertThat(account, is(nullValue()));
 
   }
 
-  @Test
-  public void updateAccountJacksonFailureTest() {
-    Account account = accountAddressService.updateAccount(1, "{wrong format)");
-
-    assertThat(account, is(nullValue()));
+  @Test(expected = IOException.class)
+  public void updateAccountJacksonFailureTest() throws IOException {
+    accountAddressService.updateAccount(1, "{wrong format)");
   }
 
   @Test
@@ -241,7 +238,7 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void createAddressReturnedAddressHasValuesTest() {
+  public void createAddressReturnedAddressHasValuesTest() throws IOException {
     when(accountRepository.findAccountById(anyLong())).thenReturn(account1);
     Address address = accountAddressService.createAddress(1, toJson(address1));
 
@@ -249,21 +246,19 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void createAddressAccountNotFoundTest() {
+  public void createAddressAccountNotFoundTest() throws IOException {
     Address address = accountAddressService.createAddress(4, toJson(address1));
 
     assertThat(address, is(nullValue()));
   }
 
-  @Test
-  public void createAddressJsonParseFailureTest() {
-    Address address = accountAddressService.createAddress(4, "{wrong format)");
-
-    assertThat(address, is(nullValue()));
+  @Test(expected = IOException.class)
+  public void createAddressJsonParseFailureTest() throws IOException {
+    accountAddressService.createAddress(4, "{wrong format)");
   }
 
   @Test
-  public void updateAddressReturnedAddressHasValuesTest() {
+  public void updateAddressReturnedAddressHasValuesTest() throws IOException {
     when(addressRepository.findAddressByIdAndAccountId(anyLong(), anyLong())).thenReturn(address1);
     Address address = accountAddressService.updateAddress(1, 1, toJson(address1));
 
@@ -271,17 +266,16 @@ public class AccountAddressServiceUnitTest {
   }
 
   @Test
-  public void updateAddressNotFoundTest() {
+  public void updateAddressNotFoundTest() throws IOException {
     Address address = accountAddressService.updateAddress(1, 3, toJson(address1));
 
     assertThat(address, is(nullValue()));
   }
 
-  @Test
-  public void updateAddressJsonParseFailureTest() {
-    Address address = accountAddressService.updateAddress(1, 1, "{wrong format)");
-
-    assertThat(address, is(nullValue()));
+  @Test(expected = IOException.class)
+  public void updateAddressJsonParseFailureTest() throws IOException {
+    when(addressRepository.findAddressByIdAndAccountId(1, 1)).thenReturn(address1);
+    accountAddressService.updateAddress(1, 1, "{wrong format}");
   }
 
   @Test
@@ -290,6 +284,11 @@ public class AccountAddressServiceUnitTest {
     Address address = accountAddressService.deleteAddress(1, 1);
 
     assertThatAddressesAreEqual(address, address1);
+  }
+
+  @Test
+  public void deleteAddress_InvalidIds_ReturnsNull() {
+    assertThat(accountAddressService.deleteAddress(6, -1), is(nullValue()));
   }
 
   private void assertThatAddressesAreEqual(Address actual, Address expected) {

@@ -3,6 +3,7 @@ package com.solstice.accountaddress.controller;
 import com.solstice.accountaddress.model.Account;
 import com.solstice.accountaddress.model.Address;
 import com.solstice.accountaddress.service.AccountAddressService;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class AccountAddressController {
         accounts.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
   }
 
-  @GetMapping("{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<Account> getAccountById(@PathVariable("id") long id) {
     Account account = accountAddressService.getAccountById(id);
     return new ResponseEntity<>(
@@ -45,7 +46,7 @@ public class AccountAddressController {
   }
 
   @PostMapping
-  public ResponseEntity<Account> createAccount(@RequestBody String body) {
+  public ResponseEntity<Account> createAccount(@RequestBody String body) throws IOException {
     Account account = accountAddressService.createAccount(body);
     return new ResponseEntity<>(
         account,
@@ -54,19 +55,19 @@ public class AccountAddressController {
     );
   }
 
-  @PutMapping("{id}")
+  @PutMapping("/{id}")
   public ResponseEntity<Account> updateAccount(
       @PathVariable("id") long id,
-      @RequestBody String body) {
+      @RequestBody String body) throws IOException {
     Account account = accountAddressService.updateAccount(id, body);
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
-        account == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK
+        account == null ? HttpStatus.NOT_FOUND : HttpStatus.OK
     );
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Account> deleteAccount(@PathVariable("id") long id) {
     Account account = accountAddressService.deleteAccount(id);
     return new ResponseEntity<>(
@@ -88,7 +89,7 @@ public class AccountAddressController {
   @PostMapping("/{id}/address")
   public ResponseEntity<Address> createAddress(
       @PathVariable("id") long id,
-      @RequestBody String body) {
+      @RequestBody String body) throws IOException {
     Address address = accountAddressService.createAddress(id, body);
     return new ResponseEntity<>(
         address,
@@ -96,7 +97,7 @@ public class AccountAddressController {
         address == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.CREATED);
   }
 
-  @GetMapping("{accountId}/address/{addressId}")
+  @GetMapping("/{accountId}/address/{addressId}")
   public ResponseEntity<Address> getAddressById(
       @PathVariable("accountId") long accountId,
       @PathVariable("addressId") long addressId) {
@@ -113,7 +114,7 @@ public class AccountAddressController {
   public ResponseEntity<Address> updateAddress(
       @PathVariable("accountId") long accountId,
       @PathVariable("addressId") long addressId,
-      @RequestBody String body) {
+      @RequestBody String body) throws IOException {
     Address address = accountAddressService.updateAddress(accountId, addressId, body);
     return new ResponseEntity<>(
         address,
