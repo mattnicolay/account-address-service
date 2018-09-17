@@ -22,11 +22,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
     DbUnitTestExecutionListener.class})
 @DatabaseSetup("classpath:test-dataset.xml")
-@ActiveProfiles("test")
 public class AccountRepositoryUnitTests {
 
   @Autowired
