@@ -5,6 +5,8 @@ import com.solstice.accountaddress.model.Address;
 import com.solstice.accountaddress.service.AccountAddressService;
 import java.io.IOException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/accounts")
 public class AccountAddressController {
+
+  private Logger logger = LoggerFactory.getLogger(AccountAddressController.class);
 
   private AccountAddressService accountAddressService;
 
@@ -48,6 +52,7 @@ public class AccountAddressController {
   @PostMapping
   public ResponseEntity<Account> createAccount(@RequestBody String body) throws IOException {
     Account account = accountAddressService.createAccount(body);
+    logger.info("past createAccount");
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
@@ -73,7 +78,7 @@ public class AccountAddressController {
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
-        account == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK
+        account == null ? HttpStatus.NOT_FOUND : HttpStatus.OK
     );
   }
 

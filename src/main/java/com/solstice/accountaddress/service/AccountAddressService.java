@@ -35,24 +35,25 @@ public class AccountAddressService {
   }
 
   public Account createAccount(String data) throws IOException {
-    Account newAccount = getAccountFromJson(data);
+    Account newAccount = objectMapper.readValue(data, Account.class);
     newAccount = accountRepository.save(newAccount);
     return newAccount;
   }
 
   public Account updateAccount(long id, String data) throws IOException {
-    Account updatedAccount = getAccountFromJson(data);
-    if (updatedAccount == null) {
-      return null;
+    Account updatedAccount = objectMapper.readValue(data, Account.class);
+    if (updatedAccount != null) {
+      updatedAccount.setId(id);
+      updatedAccount = accountRepository.save(updatedAccount);
     }
-    updatedAccount.setId(id);
-    updatedAccount = accountRepository.save(updatedAccount);
     return updatedAccount;
   }
 
   public Account deleteAccount(long id) {
     Account deletedAccount = getAccountById(id);
-    accountRepository.delete(deletedAccount);
+    if(deletedAccount != null) {
+      accountRepository.delete(deletedAccount);
+    }
     return deletedAccount;
   }
 
@@ -65,7 +66,7 @@ public class AccountAddressService {
   }
 
   public Address createAddress(long id, String body) throws IOException {
-    Address address= getAddressFromJson(body);
+    Address address= objectMapper.readValue(body, Address.class);
     Account account = accountRepository.findAccountById(id);
     if (account == null) {
       return null;
@@ -79,7 +80,7 @@ public class AccountAddressService {
     Address updatedAddress = null;
     Address dbAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
     if(dbAddress != null) {
-      updatedAddress = getAddressFromJson(body);
+      updatedAddress = objectMapper.readValue(body, Address.class);
       updatedAddress.setId(addressId);
       addressRepository.save(updatedAddress);
     }
@@ -90,17 +91,5 @@ public class AccountAddressService {
     Address deletedAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
     addressRepository.delete(deletedAddress);
     return deletedAddress;
-  }
-
-  private Account getAccountFromJson(String json) throws IOException {
-    Account account = null;
-    account = objectMapper.readValue(json, Account.class);
-    return account;
-  }
-
-  private Address getAddressFromJson(String json) throws IOException {
-    Address address = null;
-    address = objectMapper.readValue(json, Address.class);
-    return address;
   }
 }

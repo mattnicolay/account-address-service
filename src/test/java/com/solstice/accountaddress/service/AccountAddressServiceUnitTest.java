@@ -61,6 +61,7 @@ public class AccountAddressServiceUnitTest {
   public void setup() {
 
     address1 = new Address(
+        1L,
         "111 N Canal St",
         "700",
         "Chicago",
@@ -69,6 +70,7 @@ public class AccountAddressServiceUnitTest {
         "United States"
     );
     address2 = new Address(
+        2L,
         "233 S Wacker Dr",
         "4305",
         "Chicago",
@@ -77,6 +79,7 @@ public class AccountAddressServiceUnitTest {
         "United States"
     );
     address3 = new Address(
+        3L,
         "405 Lexington Ave",
         "203",
         "New York",

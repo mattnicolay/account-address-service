@@ -13,6 +13,7 @@ import javax.persistence.SqlResultSetMapping;
 @SqlResultSetMapping(name="AddressInAccountMapping", classes = {
     @ConstructorResult(targetClass = Address.class,
         columns = {
+            @ColumnResult(name="id", type=Long.class),
             @ColumnResult(name="street", type=String.class),
             @ColumnResult(name="apartment", type=String.class),
             @ColumnResult(name="city", type=String.class),
@@ -23,7 +24,7 @@ import javax.persistence.SqlResultSetMapping;
 })
 @NamedNativeQuery(
     name = "Address.findAddressByIdAndAccountId",
-    query = "select street, apartment, city, state, zip, country "
+    query = "select id, street, apartment, city, state, zip, country "
         + "from address "
         + "where id = :addressId and :accountId = account_id",
     resultSetMapping = "AddressInAccountMapping"
@@ -44,8 +45,9 @@ public class Address {
 
   }
 
-  public Address(String street, String apartment, String city, String state, String zip,
+  public Address(Long id, String street, String apartment, String city, String state, String zip,
       String country) {
+    this.id = id;
     this.street = street;
     this.apartment = apartment;
     this.city = city;
