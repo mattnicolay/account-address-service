@@ -90,7 +90,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void getAccountById_InvalidId_Code404EmptyBody() throws Exception {
-    mockMvcPerform(GET, "/accounts/1", 500, "", "");
+    mockMvcPerform(GET, "/accounts/1", 404, "", "");
   }
 
   @Test
@@ -172,7 +172,7 @@ public class AccountAddressControllerUnitTest {
 
   @Test
   public void getAddressById_InvalidId_Code404EmptyBody() throws Exception {
-    mockMvcPerform(GET, "/accounts/1/address/1", 404, "", "");
+    mockMvcPerform(GET, "/accounts/1/address/-1", 404, "", "");
   }
 
   @Test

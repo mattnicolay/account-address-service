@@ -46,7 +46,7 @@ public class AccountAddressController {
     return new ResponseEntity<>(
         account,
         new HttpHeaders(),
-        account == null ? HttpStatus.INTERNAL_SERVER_ERROR : HttpStatus.OK);
+        account == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
   }
 
   @PostMapping
