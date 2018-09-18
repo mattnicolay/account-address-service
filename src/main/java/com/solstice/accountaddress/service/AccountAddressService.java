@@ -36,7 +36,9 @@ public class AccountAddressService {
 
   public Account createAccount(String data) throws IOException {
     Account newAccount = objectMapper.readValue(data, Account.class);
-    newAccount = accountRepository.save(newAccount);
+    if (newAccount != null) {
+      newAccount = accountRepository.save(newAccount);
+    }
     return newAccount;
   }
 
@@ -68,11 +70,10 @@ public class AccountAddressService {
   public Address createAddress(long id, String body) throws IOException {
     Address address= objectMapper.readValue(body, Address.class);
     Account account = accountRepository.findAccountById(id);
-    if (account == null) {
-      return null;
+    if (account != null) {
+      account.addAddress(address);
+      accountRepository.save(account);
     }
-    account.addAddress(address);
-    accountRepository.save(account);
     return address;
   }
 
@@ -89,7 +90,9 @@ public class AccountAddressService {
 
   public Address deleteAddress(long accountId, long addressId) {
     Address deletedAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
-    addressRepository.delete(deletedAddress);
+    if (deletedAddress != null) {
+      addressRepository.delete(deletedAddress);
+    }
     return deletedAddress;
   }
 }
