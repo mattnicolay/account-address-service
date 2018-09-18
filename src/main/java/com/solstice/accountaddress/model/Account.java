@@ -18,7 +18,7 @@ public class Account {
   private String firstName;
   private String lastName;
   private String email;
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "accountId")
   @JsonIgnoreProperties("account")
   private List<Address> addresses;

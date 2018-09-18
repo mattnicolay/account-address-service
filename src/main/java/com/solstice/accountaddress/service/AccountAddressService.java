@@ -70,10 +70,11 @@ public class AccountAddressService {
   public Address createAddress(long id, String body) throws IOException {
     Address address= objectMapper.readValue(body, Address.class);
     Account account = accountRepository.findAccountById(id);
-    if (account != null) {
-      account.addAddress(address);
-      accountRepository.save(account);
+    if (account == null) {
+      return null;
     }
+    account.addAddress(address);
+    accountRepository.save(account);
     return address;
   }
 
