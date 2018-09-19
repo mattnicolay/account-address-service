@@ -3,31 +3,6 @@ server:
     8082
 
 spring:
-  datasource:
-    driverClassName:
-      com.mysql.jdbc.Driver
-    url:
-      jdbc:mysql://localhost:3306/amazon?allowPublicKeyRetrieval=true&useSSL=false
-    username:
-      dbuser
-    password:
-      dbpassword
-
   jpa:
-    generate-ddl:
-      true
     hibernate:
-      ddl-auto:
-        create
-    properties:
-      hibernate:
-        dialect:
-          org.hibernate.dialect.MySQL5Dialect
-
----
-spring:
-  profiles:
-    jenkins-test
-  datasource:
-    url:
-      jdbc:mysql://10.10.105.100:3306/amazon?allowPublicKeyRetrieval=true&useSSL=false
+      ddl-auto: create
