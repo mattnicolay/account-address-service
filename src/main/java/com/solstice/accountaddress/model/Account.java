@@ -1,7 +1,7 @@
 package com.solstice.accountaddress.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.Set;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,13 +21,13 @@ public class Account {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "accountId")
   @JsonIgnoreProperties("account")
-  private Set<Address> addresses;
+  private List<Address> addresses;
 
   public Account() {
   }
 
   public Account(String firstName, String lastName, String email,
-      Set<Address> addresses) {
+      List<Address> addresses) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -66,11 +66,11 @@ public class Account {
     this.email = email;
   }
 
-  public Set<Address> getAddresses() {
+  public List<Address> getAddresses() {
     return addresses;
   }
 
-  public void setAddresses(Set<Address> addresses) {
+  public void setAddresses(List<Address> addresses) {
     this.addresses = addresses;
   }
 
