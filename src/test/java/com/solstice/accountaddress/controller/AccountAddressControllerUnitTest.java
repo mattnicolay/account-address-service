@@ -18,6 +18,8 @@ import com.solstice.accountaddress.model.Address;
 import com.solstice.accountaddress.service.AccountAddressService;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,7 +70,9 @@ public class AccountAddressControllerUnitTest {
         "60606",
         "United States"
     );
-    account = new Account("Jane", "Doe", "jdoe@gmail.com", Arrays.asList(address));
+    Set<Address> addresses = new HashSet<>();
+    addresses.add(address);
+    account = new Account("Jane", "Doe", "jdoe@gmail.com", addresses);
   }
 
   @Test
