@@ -34,16 +34,14 @@ public class AccountAddressService {
     return accountRepository.findAccountById(id);
   }
 
-  public Account createAccount(String data) throws IOException {
-    Account newAccount = objectMapper.readValue(data, Account.class);
+  public Account createAccount(Account newAccount) {
     if (newAccount != null) {
       newAccount = accountRepository.save(newAccount);
     }
     return newAccount;
   }
 
-  public Account updateAccount(long id, String data) throws IOException {
-    Account updatedAccount = objectMapper.readValue(data, Account.class);
+  public Account updateAccount(long id, Account updatedAccount) {
     if (updatedAccount != null) {
       updatedAccount.setId(id);
       updatedAccount = accountRepository.save(updatedAccount);
@@ -67,8 +65,7 @@ public class AccountAddressService {
     return addressRepository.findAddressByIdAndAccountId(addressId, accountId);
   }
 
-  public Address createAddress(long id, String body) throws IOException {
-    Address address= objectMapper.readValue(body, Address.class);
+  public Address createAddress(long id, Address address) {
     Account account = accountRepository.findAccountById(id);
     if (account == null) {
       return null;
@@ -78,14 +75,14 @@ public class AccountAddressService {
     return address;
   }
 
-  public Address updateAddress(long accountId, long addressId, String body) throws IOException {
-    Address updatedAddress = null;
+  public Address updateAddress(long accountId, long addressId, Address updatedAddress) {
     Address dbAddress = addressRepository.findAddressByIdAndAccountId(addressId, accountId);
-    if(dbAddress != null) {
-      updatedAddress = objectMapper.readValue(body, Address.class);
-      updatedAddress.setId(addressId);
-      addressRepository.save(updatedAddress);
+    if(dbAddress == null || updatedAddress == null) {
+      return null;
     }
+    updatedAddress.setId(addressId);
+    addressRepository.save(updatedAddress);
+
     return updatedAddress;
   }
 

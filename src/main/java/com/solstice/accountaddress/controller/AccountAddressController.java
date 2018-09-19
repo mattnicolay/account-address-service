@@ -50,7 +50,7 @@ public class AccountAddressController {
   }
 
   @PostMapping
-  public ResponseEntity<Account> createAccount(@RequestBody String body) throws IOException {
+  public ResponseEntity<Account> createAccount(@RequestBody Account body) {
     Account account = accountAddressService.createAccount(body);
     logger.info("past createAccount");
     return new ResponseEntity<>(
@@ -63,7 +63,7 @@ public class AccountAddressController {
   @PutMapping("/{id}")
   public ResponseEntity<Account> updateAccount(
       @PathVariable("id") long id,
-      @RequestBody String body) throws IOException {
+      @RequestBody Account body) {
     Account account = accountAddressService.updateAccount(id, body);
     return new ResponseEntity<>(
         account,
@@ -94,7 +94,7 @@ public class AccountAddressController {
   @PostMapping("/{id}/address")
   public ResponseEntity<Address> createAddress(
       @PathVariable("id") long id,
-      @RequestBody String body) throws IOException {
+      @RequestBody Address body) {
     Address address = accountAddressService.createAddress(id, body);
     return new ResponseEntity<>(
         address,
@@ -119,7 +119,7 @@ public class AccountAddressController {
   public ResponseEntity<Address> updateAddress(
       @PathVariable("accountId") long accountId,
       @PathVariable("addressId") long addressId,
-      @RequestBody String body) throws IOException {
+      @RequestBody Address body) {
     Address address = accountAddressService.updateAddress(accountId, addressId, body);
     return new ResponseEntity<>(
         address,
