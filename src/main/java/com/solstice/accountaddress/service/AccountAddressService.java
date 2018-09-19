@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountAddressService {
 
-  private Logger logger = LoggerFactory.getLogger(AccountAddressService.class);
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private ObjectMapper objectMapper;
   private AccountRepository accountRepository;

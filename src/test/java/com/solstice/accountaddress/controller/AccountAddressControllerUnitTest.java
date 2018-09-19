@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @WebMvcTest(AccountAddressController.class)
 public class AccountAddressControllerUnitTest {
 
-  private Logger logger = LoggerFactory.getLogger(AccountAddressControllerUnitTest.class);
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String GET = "GET";
   private final String POST = "POST";
   private final String PUT = "PUT";

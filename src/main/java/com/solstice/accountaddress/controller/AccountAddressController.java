@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/accounts")
 public class AccountAddressController {
 
-  private Logger logger = LoggerFactory.getLogger(AccountAddressController.class);
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private AccountAddressService accountAddressService;
 

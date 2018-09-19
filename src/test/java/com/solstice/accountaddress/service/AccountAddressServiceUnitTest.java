@@ -36,7 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class AccountAddressServiceUnitTest {
 
-  private Logger logger = LoggerFactory.getLogger(AccountAddressServiceUnitTest.class);
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String CREATE = "CREATE";
   private final String UPDATE = "UPDATE";
 
